@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Who Wants to Be a Millionaire? - Summary</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh; /* Full viewport height */
+            text-align: center; /* Center-align all text */
+        }
+
+        h1 {
+            font-size: 4em; /* Increase the size of the main heading */
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        #summary {
+            font-size: 2.5em; /* Increase the size of the summary text */
+            margin: 20px 0;
+            padding: 10px 20px;
+            background-color: #e8f5e9;
+            border: 1px solid #4CAF50;
+            border-radius: 5px;
+            display: inline-block; /* Prevent full-width box */
+        }
+
+        nav a {
+            font-size: 2em; /* Increase the size of the navigation link */
+            display: inline-block;
+            margin: 20px;
+            padding: 15px 30px;
+            text-decoration: none;
+            color: white;
+            background-color: #4CAF50;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: #45a049;
+        }
+
+        #fireworks-container {
+            position: fixed; /* Fixed to cover the entire viewport */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Allow clicks to pass through */
+            z-index: 0; /* Behind the content */
+        }
+
+        #fireworks-container.show-fireworks {
+            display: block; /* Show fireworks when triggered */
+        }
+
+        .firework {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: transparent;
+            border-radius: 50%;
+            animation: explode 1.5s ease-out infinite;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(5);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="center-content">
+        <h1>Who Wants to Be a Millionaire</h1>
+        <p id="summary"></p>
+        <nav>
+            <a href="events.html">Go to Event List</a>
+        </nav>
+    </div>
+
+    <div id="fireworks-container"></div> <!-- Fireworks container -->
+
+    <script src="script.js"></script>
+    <script>
+        displaySummary();
+
+        function displaySummary() {
+            const events = JSON.parse(localStorage.getItem("events")) || [];
+            let coleWins = 0;
+            let glennWins = 0;
+
+            events.forEach(event => {
+                if (event.winner === "Cole") {
+                    coleWins++;
+                } else if (event.winner === "Glenn") {
+                    glennWins++;
+                }
+            });
+
+            const difference = Math.abs(coleWins - glennWins);
+            const summaryText = coleWins === glennWins
+                ? "No one owes anything!"
+                : coleWins > glennWins
+                    ? `Glenn owes Cole $${difference} Million.`
+                    : `Cole owes Glenn $${difference} Million.`;
+
+            document.getElementById("summary").textContent = summaryText;
+
+            // Trigger fireworks if Glenn owes Cole
+            if (coleWins > glennWins) {
+                triggerFireworks();
+            }
+        }
+
+        function triggerFireworks() {
+            const container = document.getElementById("fireworks-container");
+            container.classList.add("show-fireworks");
+
+            // Repeat fireworks creation every 1.5 seconds
+            setInterval(() => {
+                for (let i = 0; i < 10; i++) {
+                    const firework = document.createElement("div");
+                    firework.classList.add("firework");
+                    firework.style.left = `${Math.random() * 100}%`;
+                    firework.style.top = `${Math.random() * 100}%`;
+                    firework.style.backgroundColor = getRandomColor();
+                    firework.style.animationDelay = `${Math.random() * 1.5}s`;
+                    container.appendChild(firework);
+
+                    // Remove firework after animation
+                    setTimeout(() => {
+                        firework.remove();
+                    }, 1500);
+                }
+            }, 1500); // Repeat every 1.5 seconds
+        }
+
+        function getRandomColor() {
+            const colors = ["#FF5733", "#33FF57", "#3357FF", "#FF33A1", "#FFD700"];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+    </script>
+</body>
+</html>
